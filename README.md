@@ -14,9 +14,14 @@ Notice that [the original implementation](https://github.com/lehaifeng/T-GCN/tre
 * matplotlib
 * pandas
 * torch
-* pytorch-lightning>=1.3.0
+* pytorch-lightning==1.6.3
 * torchmetrics>=0.3.0
 * python-dotenv
+* scipy
+* ipykernel
+* osmnx
+* geopandas
+* networkx
 
 ## Model Training
 
