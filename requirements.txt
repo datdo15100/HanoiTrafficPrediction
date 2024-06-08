@@ -1,0 +1,12 @@
+numpy
+matplotlib
+pandas
+torch
+pytorch-lightning==1.6.3
+torchmetrics>=0.3.0
+python-dotenv
+scipy
+ipykernel
+osmnx
+geopandas
+networkx
