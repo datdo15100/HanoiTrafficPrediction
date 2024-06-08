@@ -22,6 +22,10 @@ Notice that [the original implementation](https://github.com/lehaifeng/T-GCN/tre
 * osmnx
 * geopandas
 * networkx
+* dbfread
+
+## Train with GPU!
+Use this link https://pytorch.org/get-started/locally/ to install pytorch with GPU support. 
 
 ## Model Training
 

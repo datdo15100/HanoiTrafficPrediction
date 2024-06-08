@@ -10,3 +10,6 @@ ipykernel
 osmnx
 geopandas
 networkx
+charset_normalizer
+requests
+dbfread
