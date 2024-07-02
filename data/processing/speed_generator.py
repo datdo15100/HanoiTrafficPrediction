@@ -6,11 +6,15 @@ import geopandas as gpd
 network_dbf_path = '../hanoi/network.dbf'
 network_df = gpd.read_file(network_dbf_path)
 
-# Extract unique IDs from the network DBF
-network_ids = network_df['Id'].unique()
+# Filter based on FRC
+selected_frc = 3  # Change this to the desired FRC
+network_df = network_df[network_df['FRC'] == selected_frc]
 
-# Initialize a DataFrame to hold the average speed for each ID
-speed_data = pd.DataFrame(columns=network_ids, index=[0])
+# Combine segments by StreetName
+combined_network = network_df.dissolve(by='StreetName')
+
+# Initialize a DataFrame to hold the average speed for each StreetName
+speed_data = pd.DataFrame(columns=combined_network.index, index=[0])
 speed_data = speed_data.astype(float)  # Ensure the DataFrame columns are of numeric type
 
 # Load the saved dataframes from the pickle file
@@ -19,20 +23,19 @@ SAVE_FILE = "../hanoi/all_dataframes_final.pkl"
 with open(SAVE_FILE, 'rb') as f:
     loaded_dataframes = pickle.load(f)
 
-current_folder = 4383493
-days = 19
+# Iterate through each DataFrame in the dictionary and process the speed data
+for key, dataframe in loaded_dataframes.items():
+    # Standardize column names by stripping the prefix
+    standardized_columns = {col: col.split('_')[1] for col in dataframe.columns if '_' in col}
+    dataframe.rename(columns=standardized_columns, inplace=True)
+    
+    if 'HvgSp' in dataframe.columns and 'Id' in dataframe.columns:
+        temp_df = pd.DataFrame([dataframe['HvgSp']], columns=dataframe['Id'])
+        temp_df = temp_df.reindex(columns=network_df['Id'], fill_value=0)
+        temp_df.columns = network_df.set_index('Id').loc[temp_df.columns, 'StreetName'].values
+        temp_df = temp_df.T.groupby(temp_df.columns).mean().T  # Transpose, group by columns, then transpose back
+        speed_data = pd.concat([speed_data, temp_df], ignore_index=True)
 
-for day in range(days):
-    folder = loaded_dataframes[current_folder]
-    for dataframe in folder.values():
-        dataframe.columns = list(map(lambda x: x.split('_')[1], dataframe.columns))
-        if 'HvgSp' in dataframe.columns:
-            temp_df = pd.DataFrame([dataframe['HvgSp']], columns=dataframe.Id)
-            temp_df = temp_df.reindex(columns=speed_data.columns, fill_value=0)
-            speed_data = pd.concat([speed_data, temp_df], ignore_index=True)
-    
-    current_folder += 1
-    
 # Remove completely empty rows
 speed_data.dropna(how='all', inplace=True)
 # Perform linear interpolation to fill in missing values
