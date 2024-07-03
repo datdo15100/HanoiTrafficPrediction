@@ -22,14 +22,14 @@ def combine_geometries(gdf):
     return gpd.GeoDataFrame({'StreetName': street_names, 'geometry': combined_geometries}, geometry='geometry')
 
 # Function to filter by road class and visualize
-def filter_and_visualize_by_frc(gdf, frc):
-    filtered_gdf = gdf[gdf['FRC'] == frc]
+def filter_and_visualize_by_frc(gdf, frcs):
+    filtered_gdf = gdf[gdf['FRC'].isin(frcs)]
     combined_gdf = combine_geometries(filtered_gdf)
     
     # Plot the combined GeoDataFrame
     fig, ax = plt.subplots(figsize=(15, 15))
     combined_gdf.plot(ax=ax, column='StreetName', legend=True, cmap='tab20')
-    ax.set_title(f'Combined Road Segments by StreetName for Road Class {frc}')
+    ax.set_title(f'Combined Road Segments by StreetName for Road Classes {frcs}')
     ax.set_xlabel('Longitude')
     ax.set_ylabel('Latitude')
     
@@ -47,8 +47,8 @@ def filter_and_visualize_by_frc(gdf, frc):
     
     # Get the number of unique roads
     number_of_roads = combined_gdf.shape[0]
-    print(f'Number of unique roads for road class {frc}: {number_of_roads}')
+    print(f'Number of unique roads for road classes {frcs}: {number_of_roads}')
 
 # Example usage
-selected_frc = 3  # Change this to the desired road class
-filter_and_visualize_by_frc(gdf, selected_frc)
+selected_frcs = [3, 4]  # Change this to the desired road classes
+filter_and_visualize_by_frc(gdf, selected_frcs)

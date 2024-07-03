@@ -10,9 +10,9 @@ from shapely.ops import unary_union
 shapefile_path = '../hanoi/network.shp'
 gdf = gpd.read_file(shapefile_path)
 
-# Filter based on FRC
-selected_frc = 3  # Change this to the desired FRC
-gdf = gdf[gdf['FRC'] == selected_frc]
+# Filter based on multiple FRCs
+selected_frcs = [3, 4]  # Change this to the desired FRCs
+gdf = gdf[gdf['FRC'].isin(selected_frcs)]
 
 # Combine segments by StreetName
 combined_gdf = gdf.dissolve(by='StreetName')
@@ -38,7 +38,7 @@ pos = {idx: (geom.centroid.x, geom.centroid.y) for idx, geom in combined_gdf.geo
 # Plot the graph
 plt.figure(figsize=(15, 15))
 nx.draw(G, pos, with_labels=True, labels={idx: idx for idx in G.nodes}, node_size=15, node_color='blue', edge_color='gray')
-plt.title(f"Road Network with Road Class {selected_frc}")
+plt.title(f"Road Network with Road Classes {selected_frcs}")
 plt.show()
 
 # Convert adjacency matrix to a DataFrame for better visualization

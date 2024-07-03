@@ -6,9 +6,9 @@ import geopandas as gpd
 network_dbf_path = '../hanoi/network.dbf'
 network_df = gpd.read_file(network_dbf_path)
 
-# Filter based on FRC
-selected_frc = 3  # Change this to the desired FRC
-network_df = network_df[network_df['FRC'] == selected_frc]
+# Filter based on multiple FRCs
+selected_frcs = [3, 4]  # Change this to the desired FRCs
+network_df = network_df[network_df['FRC'].isin(selected_frcs)]
 
 # Combine segments by StreetName
 combined_network = network_df.dissolve(by='StreetName')
